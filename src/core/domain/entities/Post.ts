@@ -1,3 +1,5 @@
+import { PostStatus } from '@core/domain/enums/PostStatus';
+
 export default class Post {
   private id: number | null;
   private title: string;
@@ -6,7 +8,7 @@ export default class Post {
   private categoryIds: number[];
   private relatedImageIds: number[];
   private content: string;
-  private status: string;
+  private status: PostStatus;
   private ownerId: number;
   private createdAt: Date;
   private updatedAt: Date;
@@ -19,7 +21,7 @@ export default class Post {
     categoryIds: number[],
     relatedImageIds: number[],
     content: string,
-    status: string,
+    status: PostStatus,
     ownerId: number,
   ) {
     this.id = id;
@@ -95,7 +97,7 @@ export default class Post {
     return this.status;
   }
 
-  setStatus(status: string) {
+  setStatus(status: PostStatus) {
     this.status = status;
   }
 
