@@ -1,5 +1,6 @@
 import Post from '@core/domain/entities/Post';
 import PostValidator from '@core/domain/validators/PostValidator';
+import { PostStatus } from '@core/domain/enums/PostStatus';
 
 export default class PostBuilder {
   private id: number | null;
@@ -9,7 +10,7 @@ export default class PostBuilder {
   private categoryIds: number[];
   private relatedImageIds: number[];
   private content: string;
-  private status: string;
+  private status: PostStatus;
   private ownerId: number;
 
   constructor() {
@@ -20,7 +21,7 @@ export default class PostBuilder {
     this.categoryIds = [];
     this.relatedImageIds = [];
     this.content = '';
-    this.status = '';
+    this.status = PostStatus.DRAFT;
     this.ownerId = 0;
   }
 
@@ -78,7 +79,7 @@ export default class PostBuilder {
     this.content = content;
   }
 
-  setStatus(status: string) {
+  setStatus(status: PostStatus) {
     this.status = status;
   }
 
