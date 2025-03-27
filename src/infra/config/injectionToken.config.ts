@@ -1,4 +1,8 @@
 export const InjectionToken = {
+  /**
+   * @see ../../core/application/services/Logger.ts
+   * @interface Logger
+   * */
   LOGGER: 'Logger',
 
   /**
