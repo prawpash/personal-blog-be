@@ -2,21 +2,24 @@ import {
   Controller,
   Delete,
   Get,
+  Inject,
   Param,
   Post,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import { LoggerService } from '@infra/logging/LoggerService';
 import { IdValidationDTO } from './dtos/IdValidationDTO';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CustomValidationPipe } from '@infra/validators/CustomValidationPipe';
+import { Logger } from '@core/application/services/Logger';
+import { InjectionToken } from '@infra/config/injectionToken.config';
 
 @Controller('images')
 export class ImageController {
-  constructor(private readonly logger: LoggerService) {
-    this.logger.setContext(ImageController.name);
-  }
+  constructor(
+    @Inject(InjectionToken.LOGGER)
+    private readonly logger: Logger,
+  ) {}
 
   @Get(':fileName')
   getImageByFileName(@Param('fileName') fileName: string) {

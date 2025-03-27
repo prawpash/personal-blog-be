@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { EnvService } from '@infra/env/env.service';
 import { ValidationPipe } from '@nestjs/common';
-import { LoggerService } from '@infra/logging/LoggerService';
+import { InjectionToken } from '@infra/config/injectionToken.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -12,7 +12,7 @@ async function bootstrap() {
   const configService = app.get(EnvService);
   const port = configService.get('PORT');
 
-  app.useLogger(app.get(LoggerService));
+  app.useLogger(app.get(InjectionToken.LOGGER));
 
   app.useGlobalPipes(
     new ValidationPipe({

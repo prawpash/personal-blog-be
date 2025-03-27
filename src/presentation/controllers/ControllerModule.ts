@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { CategoryController } from './CategoryController';
 import { PostController } from './PostController';
-import { LoggerModule } from '@infra/logging/LoggerModule';
 import { EnvModule } from '@infra/env/env.module';
 import { ImageController } from './ImageController';
 import { UserController } from './UserController';
+import { LoggerModule } from '@infra/logger/LoggerModule';
 
 @Module({
   imports: [LoggerModule, EnvModule],
@@ -15,4 +15,4 @@ import { UserController } from './UserController';
     UserController,
   ],
 })
-export class ControllerModule { }
+export class ControllerModule {}

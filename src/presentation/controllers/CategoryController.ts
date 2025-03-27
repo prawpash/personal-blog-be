@@ -3,20 +3,23 @@ import {
   Controller,
   Delete,
   Get,
+  Inject,
   Param,
   Post,
   Put,
 } from '@nestjs/common';
 import { IdValidationDTO } from '@presentation/controllers/dtos/IdValidationDTO';
-import { LoggerService } from '@infra/logging/LoggerService';
 import { CreateCategoryDTO } from './dtos/category/CreateCategoryDTO';
 import { UpdateCategoryDTO } from './dtos/category/UpdateCategoryDTO';
+import { Logger } from '@core/application/services/Logger';
+import { InjectionToken } from '@infra/config/injectionToken.config';
 
 @Controller('categories')
 export class CategoryController {
-  constructor(private readonly logger: LoggerService) {
-    this.logger.setContext(CategoryController.name);
-  }
+  constructor(
+    @Inject(InjectionToken.LOGGER)
+    private readonly logger: Logger,
+  ) {}
 
   @Get()
   getCategories() {

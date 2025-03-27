@@ -6,9 +6,9 @@ import { InjectionToken } from '@infra/config/injectionToken.config';
   providers: [
     {
       provide: InjectionToken.LOGGER,
-      useValue: LoggerService,
+      useClass: LoggerService,
     },
   ],
-  exports: [LoggerService],
+  exports: [InjectionToken.LOGGER],
 })
 export class LoggerModule {}
