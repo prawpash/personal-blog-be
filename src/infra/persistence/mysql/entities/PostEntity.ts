@@ -26,9 +26,9 @@ export class PostEntity {
   @Column({ type: 'text', unique: true })
   slug: string;
 
-  @OneToOne(() => ImageEntity)
+  @OneToOne(() => ImageEntity, { nullable: true, onDelete: 'SET NULL' })
   @JoinColumn({ name: 'thumbnail_id' })
-  thumbnail: ImageEntity;
+  thumbnail: ImageEntity | null;
 
   @ManyToMany(() => CategoryEntity, (category) => category.posts)
   @JoinTable({
@@ -69,6 +69,7 @@ export class PostEntity {
   status: PostStatus;
 
   @ManyToOne(() => UserEntity, (author) => author.posts)
+  @JoinColumn({ name: 'author_id' })
   author: UserEntity;
 
   @CreateDateColumn({ name: 'created_at' })
