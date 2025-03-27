@@ -23,7 +23,7 @@ export class PostEntity {
   @Column()
   title: string;
 
-  @Column({ type: 'text', unique: true })
+  @Column({ unique: true })
   slug: string;
 
   @OneToOne(() => ImageEntity, { nullable: true, onDelete: 'SET NULL' })
