@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Inject,
   Param,
   Post,
   Put,
@@ -10,13 +11,15 @@ import {
 import { IdValidationDTO } from '@presentation/controllers/dtos/IdValidationDTO';
 import { UpdatePostDTO } from './dtos/post/UpdatePostDTO';
 import { CreatePostDTO } from './dtos/post/CreatePostDTO';
-import { LoggerService } from '@infra/logging/LoggerService';
+import { Logger } from '@core/application/services/Logger';
+import { InjectionToken } from '@infra/config/injectionToken.config';
 
 @Controller('posts')
 export class PostController {
-  constructor(private readonly logger: LoggerService) {
-    this.logger.setContext(PostController.name);
-  }
+  constructor(
+    @Inject(InjectionToken.LOGGER)
+    private readonly logger: Logger,
+  ) {}
 
   @Get()
   getPosts() {

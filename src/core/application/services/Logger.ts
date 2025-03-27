@@ -5,9 +5,9 @@ export interface Logger {
 
   warn(message: any, ...optionalParams: any[]);
 
-  debug?(message: any, ...optionalParams: any[]);
+  debug(message: any, ...optionalParams: any[]);
 
-  verbose?(message: any, ...optionalParams: any[]);
+  verbose(message: any, ...optionalParams: any[]);
 
-  fatal?(message: any, ...optionalParams: any[]);
+  fatal(message: any, ...optionalParams: any[]);
 }

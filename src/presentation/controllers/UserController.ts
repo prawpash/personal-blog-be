@@ -3,20 +3,23 @@ import {
   Controller,
   Delete,
   Get,
+  Inject,
   Param,
   Post,
   Put,
 } from '@nestjs/common';
-import { LoggerService } from '@infra/logging/LoggerService';
 import { CreateUserDTO } from './dtos/user/CreateUserDTO';
 import { IdValidationDTO } from './dtos/IdValidationDTO';
 import { UpdateUserDTO } from './dtos/user/UpdateUserDTO';
+import { Logger } from '@core/application/services/Logger';
+import { InjectionToken } from '@infra/config/injectionToken.config';
 
 @Controller('users')
 export class UserController {
-  constructor(private readonly logger: LoggerService) {
-    this.logger.setContext(UserController.name);
-  }
+  constructor(
+    @Inject(InjectionToken.LOGGER)
+    private readonly logger: Logger,
+  ) {}
 
   @Get(':username')
   getUserByUsername(@Param('username') username: string) {
