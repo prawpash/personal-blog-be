@@ -10,4 +10,10 @@ export const InjectionToken = {
    * @interface PasswordService
    * */
   PASSWORD_SERVICE: 'PasswordService',
+
+  /**
+   * @see ../../core/domain/repositories/UserRepository.ts
+   * @interface UserRepository
+   * */
+  USER_REPOSITORY: 'UserRepository',
 };
