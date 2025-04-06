@@ -6,6 +6,8 @@ export interface UserRepository {
 
   findByEmail(email: string): Promise<User | null>;
 
+  findByUsername(username: string): Promise<User | null>;
+
   create(user: User): Promise<User>;
 
   update(userId: number, payload: UpdateUserPayload): Promise<void>;

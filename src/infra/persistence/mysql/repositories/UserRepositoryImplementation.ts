@@ -13,6 +13,23 @@ export class UserRepositoryImplementation implements UserRepository {
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
   ) {}
+  async findByUsername(username: string): Promise<User | null> {
+    const userByUsername = await this.userRepository.findOneBy({ username });
+
+    if (!userByUsername) return null;
+
+    const user = new UserBuilder()
+      .setId(userByUsername.id)
+      .setName(userByUsername.name)
+      .setUsername(userByUsername.username)
+      .setEmail(userByUsername.email)
+      .setPassword(userByUsername.password)
+      .setCreatedAt(userByUsername.createdAt)
+      .setUpdatedAt(userByUsername.updatedAt)
+      .build();
+
+    return user;
+  }
 
   async findById(userId: number): Promise<User | null> {
     const userById = await this.userRepository.findOneBy({ id: userId });
@@ -77,23 +94,11 @@ export class UserRepositoryImplementation implements UserRepository {
     return formattedUser;
   }
 
-  async update(userId: number, payload: UpdateUserPayload): Promise<User> {
-    const updatedUser = await this.userRepository.save({
+  async update(userId: number, payload: UpdateUserPayload): Promise<void> {
+    await this.userRepository.save({
       id: userId,
       ...payload,
     });
-
-    const formattedUser = new UserBuilder()
-      .setId(updatedUser.id)
-      .setName(updatedUser.name)
-      .setUsername(updatedUser.username)
-      .setEmail(updatedUser.email)
-      .setPassword(updatedUser.password)
-      .setCreatedAt(updatedUser.createdAt)
-      .setUpdatedAt(updatedUser.updatedAt)
-      .build();
-
-    return formattedUser;
   }
 
   async deleteById(userId: number): Promise<void> {
