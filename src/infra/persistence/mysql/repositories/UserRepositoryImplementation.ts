@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import UserBuilder from '@core/domain/builders/UserBuilder';
 import { UserRepository } from '@core/application/repositories/UserRepository';
 import { UpdateUserDTO } from '@core/application/dtos/user/UpdateUserDTO';
+import { UserResponseDTO } from '@core/application/dtos/user/UserResponseDTO';
 
 @Injectable()
 export class UserRepositoryImplementation implements UserRepository {
@@ -13,20 +14,19 @@ export class UserRepositoryImplementation implements UserRepository {
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
   ) {}
-  async findByUsername(username: string): Promise<User | null> {
+  async findByUsername(username: string): Promise<UserResponseDTO | null> {
     const userByUsername = await this.userRepository.findOneBy({ username });
 
     if (!userByUsername) return null;
 
-    const user = new UserBuilder()
-      .setId(userByUsername.id)
-      .setName(userByUsername.name)
-      .setUsername(userByUsername.username)
-      .setEmail(userByUsername.email)
-      .setPassword(userByUsername.password)
-      .setCreatedAt(userByUsername.createdAt)
-      .setUpdatedAt(userByUsername.updatedAt)
-      .build();
+    const user = new UserResponseDTO(
+      userByUsername.id,
+      userByUsername.name,
+      userByUsername.username,
+      userByUsername.email,
+      userByUsername.createdAt,
+      userByUsername.updatedAt,
+    );
 
     return user;
   }
@@ -71,7 +71,7 @@ export class UserRepositoryImplementation implements UserRepository {
     return null;
   }
 
-  async create(user: User): Promise<User> {
+  async create(user: User): Promise<UserResponseDTO> {
     const data: Partial<UserEntity> = {
       name: user.getName(),
       username: user.getUsername(),
@@ -81,15 +81,14 @@ export class UserRepositoryImplementation implements UserRepository {
 
     const createdUser = await this.userRepository.save(data);
 
-    const formattedUser = new UserBuilder()
-      .setId(createdUser.id)
-      .setName(createdUser.name)
-      .setUsername(createdUser.username)
-      .setEmail(createdUser.email)
-      .setPassword(createdUser.password)
-      .setCreatedAt(createdUser.createdAt)
-      .setUpdatedAt(createdUser.updatedAt)
-      .build();
+    const formattedUser = new UserResponseDTO(
+      createdUser.id,
+      createdUser.name,
+      createdUser.username,
+      createdUser.email,
+      createdUser.createdAt,
+      createdUser.updatedAt,
+    );
 
     return formattedUser;
   }

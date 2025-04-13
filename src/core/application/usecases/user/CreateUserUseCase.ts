@@ -1,3 +1,4 @@
+import { UserResponseDTO } from '@core/application/dtos/user/UserResponseDTO';
 import { UserRepository } from '@core/application/repositories/UserRepository';
 import { PasswordService } from '@core/application/services/PasswordService';
 import User from '@core/domain/entities/User';
@@ -9,7 +10,7 @@ export default class CreateUserUseCase {
     private readonly passwordService: PasswordService,
   ) {}
 
-  async execute(user: User) {
+  async execute(user: User): Promise<UserResponseDTO> {
     // the user email must be unique
     const userWithSameEmail = await this.userRepository.findByEmail(
       user.getEmail(),
