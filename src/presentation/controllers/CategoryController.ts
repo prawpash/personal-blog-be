@@ -8,11 +8,11 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { IdValidationDTO } from '@presentation/controllers/dtos/IdValidationDTO';
-import { CreateCategoryDTO } from './dtos/category/CreateCategoryDTO';
-import { UpdateCategoryDTO } from './dtos/category/UpdateCategoryDTO';
 import { Logger } from '@core/application/services/Logger';
 import { InjectionToken } from '@infra/config/injectionToken.config';
+import { CreateCategoryDTO } from '@presentation/dtos/category/CreateCategoryDTO';
+import { IdValidationDTO } from '@presentation/dtos/IdValidationDTO';
+import { UpdateCategoryDTO } from '@presentation/dtos/category/UpdateCategoryDTO';
 
 @Controller('categories')
 export class CategoryController {

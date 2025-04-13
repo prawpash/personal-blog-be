@@ -6,7 +6,7 @@ import {
   MinLength,
 } from 'class-validator';
 
-export class CreateUserDTO {
+export class CreateUserRequestDTO {
   @IsNotEmpty()
   @IsString()
   @MaxLength(255)

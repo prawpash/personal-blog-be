@@ -1,13 +1,13 @@
+import { UserRepository } from '@core/application/repositories/UserRepository';
 import { PasswordService } from '@core/application/services/PasswordService';
 import User from '@core/domain/entities/User';
-import { UserRepository } from '@core/domain/repositories/UserRepository';
 import { ConflictException } from '@nestjs/common';
 
 export default class CreateUserUseCase {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly passwordService: PasswordService,
-  ) { }
+  ) {}
 
   async execute(user: User) {
     // the user email must be unique

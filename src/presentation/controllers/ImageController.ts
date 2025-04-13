@@ -8,11 +8,11 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import { IdValidationDTO } from './dtos/IdValidationDTO';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { CustomValidationPipe } from '@infra/validators/CustomValidationPipe';
+import { CustomFileValidationPipe } from '@infra/validators/CustomFileValidationPipe';
 import { Logger } from '@core/application/services/Logger';
 import { InjectionToken } from '@infra/config/injectionToken.config';
+import { IdValidationDTO } from '@presentation/dtos/IdValidationDTO';
 
 @Controller('images')
 export class ImageController {
@@ -29,7 +29,7 @@ export class ImageController {
   @Post()
   @UseInterceptors(FileInterceptor('file'))
   uploadImage(
-    @UploadedFile(CustomValidationPipe)
+    @UploadedFile(CustomFileValidationPipe)
     file: Express.Multer.File,
   ) {
     this.logger.debug(file);

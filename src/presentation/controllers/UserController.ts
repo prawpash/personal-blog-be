@@ -10,18 +10,18 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { CreateUserDTO } from './dtos/user/CreateUserDTO';
-import { IdValidationDTO } from './dtos/IdValidationDTO';
-import { UpdateUserDTO } from './dtos/user/UpdateUserDTO';
 import { Logger } from '@core/application/services/Logger';
 import { InjectionToken } from '@infra/config/injectionToken.config';
-import { UserRepository } from '@core/domain/repositories/UserRepository';
 import GetUserByUsernameUseCase from '@core/application/usecases/user/GetUserByUsernameUseCase';
 import { NotFoundException as CoreNotFoundException } from '@core/exceptions/NotFoundException';
 import { ConflictException as CoreConflictException } from '@core/exceptions/ConflictException';
 import CreateUserUseCase from '@core/application/usecases/user/CreateUserUseCase';
 import { PasswordService } from '@core/application/services/PasswordService';
-import UserBuilder from '@core/domain/builders/UserBuilder';
+import { CreateUserRequestDTO } from '@presentation/dtos/user/CreateUserRequestDTO';
+import { IdValidationDTO } from '@presentation/dtos/IdValidationDTO';
+import { UpdateUserRequestDTO } from '@presentation/dtos/user/UpdateUserRequestDTO';
+import { UserMapper } from '@presentation/mappers/UserMapper';
+import { UserRepository } from '@core/application/repositories/UserRepository';
 
 @Controller('users')
 export class UserController {
@@ -32,7 +32,7 @@ export class UserController {
     private readonly userRepository: UserRepository,
     @Inject(InjectionToken.PASSWORD_SERVICE)
     private readonly passwordService: PasswordService,
-  ) { }
+  ) {}
 
   @Get(':username')
   async getUserByUsername(@Param('username') username: string) {
@@ -58,19 +58,14 @@ export class UserController {
   }
 
   @Post()
-  async createUser(@Body() createUserDTO: CreateUserDTO) {
+  async createUser(@Body() createUserDTO: CreateUserRequestDTO) {
     try {
       const createUserUseCase = new CreateUserUseCase(
         this.userRepository,
         this.passwordService,
       );
 
-      const userFromDTO = new UserBuilder()
-        .setName(createUserDTO.name)
-        .setUsername(createUserDTO.username)
-        .setEmail(createUserDTO.email)
-        .setPassword(createUserDTO.password)
-        .build();
+      const userFromDTO = UserMapper.toApplicationCreateDTO(createUserDTO);
 
       const createdUser = await createUserUseCase.execute(userFromDTO);
 
@@ -89,7 +84,7 @@ export class UserController {
   @Put(':id')
   updateUser(
     @Param() params: IdValidationDTO,
-    @Body() updatedUserDTO: UpdateUserDTO,
+    @Body() updatedUserDTO: UpdateUserRequestDTO,
   ) {
     const { id } = params;
 

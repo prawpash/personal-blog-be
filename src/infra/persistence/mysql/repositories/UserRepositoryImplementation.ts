@@ -1,11 +1,11 @@
 import User from '@core/domain/entities/User';
-import { UserRepository } from '@core/domain/repositories/UserRepository';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from '../entities/UserEntity';
 import { Repository } from 'typeorm';
 import UserBuilder from '@core/domain/builders/UserBuilder';
-import { UpdateUserPayload } from '@core/domain/dto/UpdateUserPayload';
+import { UserRepository } from '@core/application/repositories/UserRepository';
+import { UpdateUserDTO } from '@core/application/dtos/user/UpdateUserDTO';
 
 @Injectable()
 export class UserRepositoryImplementation implements UserRepository {
@@ -94,7 +94,7 @@ export class UserRepositoryImplementation implements UserRepository {
     return formattedUser;
   }
 
-  async update(userId: number, payload: UpdateUserPayload): Promise<void> {
+  async update(userId: number, payload: UpdateUserDTO): Promise<void> {
     await this.userRepository.save({
       id: userId,
       ...payload,

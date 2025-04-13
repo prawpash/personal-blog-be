@@ -1,4 +1,4 @@
-import { UserRepository } from '@core/domain/repositories/UserRepository';
+import { UserRepository } from '@core/application/repositories/UserRepository';
 import { NotFoundException } from '@core/exceptions/NotFoundException';
 
 export default class DeleteUserUseCase {

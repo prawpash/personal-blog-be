@@ -1,4 +1,4 @@
-import { UserRepository } from '@core/domain/repositories/UserRepository';
+import { UserRepository } from '@core/application/repositories/UserRepository';
 
 export default class GetUserByEmailUseCase {
   constructor(private readonly userRepository: UserRepository) {}

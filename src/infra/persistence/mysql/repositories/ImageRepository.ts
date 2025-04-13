@@ -1,10 +1,10 @@
 import Image from '@core/domain/entities/Image';
-import { ImageRepository } from '@core/domain/repositories/ImageRepository';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ImageEntity } from '../entities/ImageEntity';
 import { Repository } from 'typeorm';
 import ImageBuilder from '@core/domain/builders/ImageBuilder';
+import { ImageRepository } from '@core/application/repositories/ImageRepository';
 
 @Injectable()
 export class ImageRepositoryImplementation implements ImageRepository {

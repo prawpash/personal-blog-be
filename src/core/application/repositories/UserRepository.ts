@@ -1,5 +1,5 @@
+import { UpdateUserDTO } from '@core/application/dtos/user/UpdateUserDTO';
 import User from '@core/domain/entities/User';
-import { UpdateUserPayload } from '../dto/UpdateUserPayload';
 
 export interface UserRepository {
   findById(userId: number): Promise<User | null>;
@@ -10,7 +10,7 @@ export interface UserRepository {
 
   create(user: User): Promise<User>;
 
-  update(userId: number, payload: UpdateUserPayload): Promise<void>;
+  update(userId: number, payload: UpdateUserDTO): Promise<void>;
 
   deleteById(userId: number): Promise<void>;
 }

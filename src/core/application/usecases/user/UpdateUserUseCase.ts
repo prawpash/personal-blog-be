@@ -1,18 +1,22 @@
-import { UpdateUserPayload } from '@core/domain/dto/UpdateUserPayload';
-import { UserRepository } from '@core/domain/repositories/UserRepository';
+import { UpdateUserDTO } from '@core/application/dtos/user/UpdateUserDTO';
+import { ImageRepository } from '@core/application/repositories/ImageRepository';
+import { UserRepository } from '@core/application/repositories/UserRepository';
 import { NotFoundException } from '@core/exceptions/NotFoundException';
 
 export default class UpdateUserUseCase {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly imageRepository: ImageRepository,
+  ) {}
 
-  async execute(userId: number, payload: UpdateUserPayload) {
+  async execute(userId: number, payload: UpdateUserDTO) {
     const userById = await this.userRepository.findById(userId);
 
     if (!userById) {
       throw new NotFoundException('User with this id does not exist');
     }
 
-    const updatedUserPayload: UpdateUserPayload = {};
+    const updatedUserPayload: UpdateUserDTO = {};
 
     if (payload.name) {
       updatedUserPayload.name = payload.name;
@@ -26,13 +30,19 @@ export default class UpdateUserUseCase {
       updatedUserPayload.email = payload.email;
     }
 
-    // TODO: Add profile picture update
+    if (payload.profilePictureId) {
+      const imageById = await this.imageRepository.findById(
+        payload.profilePictureId,
+      );
 
-    const updatedUser = await this.userRepository.update(
-      userId,
-      updatedUserPayload,
-    );
+      if (!imageById) {
+        throw new NotFoundException('Image with this id does not exist');
+      }
 
-    return updatedUser;
+      updatedUserPayload.profilePictureId = payload.profilePictureId;
+    }
+
+    // Update user in database
+    await this.userRepository.update(userId, updatedUserPayload);
   }
 }
