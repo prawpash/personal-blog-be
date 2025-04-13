@@ -22,7 +22,16 @@ import { IdValidationDTO } from '@presentation/dtos/IdValidationDTO';
 import { UpdateUserRequestDTO } from '@presentation/dtos/user/UpdateUserRequestDTO';
 import { UserMapper } from '@presentation/mappers/UserMapper';
 import { UserRepository } from '@core/application/repositories/UserRepository';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { UserResponseDTO } from '@core/application/dtos/user/UserResponseDTO';
 
+@ApiTags('users')
 @Controller('users')
 export class UserController {
   constructor(
@@ -34,6 +43,38 @@ export class UserController {
     private readonly passwordService: PasswordService,
   ) {}
 
+  @ApiOperation({
+    summary: 'Find user by username',
+  })
+  @ApiParam({
+    name: 'username',
+    description: 'Username of the user',
+    example: 'sopo',
+    required: true,
+    type: String,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Response when user found',
+    type: UserResponseDTO,
+    example: {
+      id: 1,
+      name: 'Sopo',
+      username: 'sopo',
+      email: 'sopo@gmail.com',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Response when user not found',
+    example: {
+      message: 'The user with this username does not exist.',
+      error: 'Not Found',
+      statusCode: 404,
+    },
+  })
   @Get(':username')
   async getUserByUsername(@Param('username') username: string) {
     try {
@@ -43,11 +84,7 @@ export class UserController {
 
       const user = await getUserByUsernameUseCase.execute(username);
 
-      console.log(user);
-
-      return 'halo';
-
-      // return user;
+      return user;
     } catch (error) {
       if (error instanceof CoreNotFoundException) {
         throw new NotFoundException(error.message);
@@ -57,6 +94,47 @@ export class UserController {
     }
   }
 
+  @ApiOperation({
+    summary: 'Create new user',
+  })
+  @ApiBody({
+    type: CreateUserRequestDTO,
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Response when user created',
+    type: UserResponseDTO,
+    example: {
+      id: 1,
+      name: 'Sopo',
+      username: 'sopo',
+      email: 'sopo@gmail.com',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'Response when email or username already exists',
+    examples: {
+      'email-already-exists': {
+        value: {
+          message: 'This email is already in use. Please use another.',
+          error: 'Conflict',
+          statusCode: 409,
+        },
+        summary: 'Email already exists',
+      },
+      'username-already-exists': {
+        value: {
+          message: 'This username is already in use. Please use another.',
+          error: 'Conflict',
+          statusCode: 409,
+        },
+        summary: 'Username already exists',
+      },
+    },
+  })
   @Post()
   async createUser(@Body() createUserDTO: CreateUserRequestDTO) {
     try {
@@ -69,9 +147,7 @@ export class UserController {
 
       const createdUser = await createUserUseCase.execute(userFromDTO);
 
-      this.logger.debug(createdUser);
-
-      return 'Create user';
+      return createdUser;
     } catch (error) {
       if (error instanceof CoreConflictException) {
         throw new ConflictException(error.message);
