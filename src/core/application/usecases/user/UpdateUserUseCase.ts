@@ -1,6 +1,8 @@
 import { UpdateUserDTO } from '@core/application/dtos/user/UpdateUserDTO';
+import { UserResponseDTO } from '@core/application/dtos/user/UserResponseDTO';
 import { ImageRepository } from '@core/application/repositories/ImageRepository';
 import { UserRepository } from '@core/application/repositories/UserRepository';
+import { ConflictException } from '@core/exceptions/ConflictException';
 import { NotFoundException } from '@core/exceptions/NotFoundException';
 
 export default class UpdateUserUseCase {
@@ -9,25 +11,41 @@ export default class UpdateUserUseCase {
     private readonly imageRepository: ImageRepository,
   ) {}
 
-  async execute(userId: number, payload: UpdateUserDTO) {
+  async execute(
+    userId: number,
+    payload: UpdateUserDTO,
+  ): Promise<UserResponseDTO> {
     const userById = await this.userRepository.findById(userId);
 
     if (!userById) {
       throw new NotFoundException('User with this id does not exist');
     }
 
-    const updatedUserPayload: UpdateUserDTO = {};
-
-    if (payload.name) {
-      updatedUserPayload.name = payload.name;
-    }
-
     if (payload.username) {
-      updatedUserPayload.username = payload.username;
+      // check if username already exists
+      const userByUsernameExceptForId =
+        await this.userRepository.findByUsernameExceptForId(
+          payload.username,
+          userId,
+        );
+
+      if (userByUsernameExceptForId) {
+        throw new ConflictException(
+          'This username is already in use. Please use another.',
+        );
+      }
     }
 
     if (payload.email) {
-      updatedUserPayload.email = payload.email;
+      // check if email already exists
+      const userByEmailExceptForId =
+        await this.userRepository.findByEmailExceptForId(payload.email, userId);
+
+      if (userByEmailExceptForId) {
+        throw new ConflictException(
+          'This email is already in use. Please use another.',
+        );
+      }
     }
 
     if (payload.profilePictureId) {
@@ -38,11 +56,11 @@ export default class UpdateUserUseCase {
       if (!imageById) {
         throw new NotFoundException('Image with this id does not exist');
       }
-
-      updatedUserPayload.profilePictureId = payload.profilePictureId;
     }
 
     // Update user in database
-    await this.userRepository.update(userId, updatedUserPayload);
+    const updatedUser = await this.userRepository.update(userId, payload);
+
+    return updatedUser;
   }
 }
