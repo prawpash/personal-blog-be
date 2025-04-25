@@ -12,8 +12,14 @@ export const InjectionToken = {
   PASSWORD_SERVICE: 'PasswordService',
 
   /**
-   * @see ../../core/domain/repositories/UserRepository.ts
+   * @see ../../core/application/repositories/UserRepository.ts
    * @interface UserRepository
    * */
   USER_REPOSITORY: 'UserRepository',
+
+  /**
+   * @see ../../core/application/repositories/UserRepository.ts
+   * @interface ImageRepository
+   * */
+  IMAGE_REPOSITORY: 'ImageRepository',
 };

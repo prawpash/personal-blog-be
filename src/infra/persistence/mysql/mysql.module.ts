@@ -4,6 +4,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserRepositoryImplementation } from './repositories/UserRepositoryImplementation';
 import { UserEntity } from './entities/UserEntity';
+import { ImageRepositoryImplementation } from './repositories/ImageRepository';
+import { ImageEntity } from './entities/ImageEntity';
 
 @Module({
   imports: [
@@ -12,14 +14,18 @@ import { UserEntity } from './entities/UserEntity';
         ...TypeORMDataSourceOptions,
       }),
     }),
-    TypeOrmModule.forFeature([UserEntity]),
+    TypeOrmModule.forFeature([UserEntity, ImageEntity]),
   ],
   providers: [
     {
       provide: InjectionToken.USER_REPOSITORY,
       useClass: UserRepositoryImplementation,
     },
+    {
+      provide: InjectionToken.IMAGE_REPOSITORY,
+      useClass: ImageRepositoryImplementation,
+    },
   ],
-  exports: [InjectionToken.USER_REPOSITORY],
+  exports: [InjectionToken.USER_REPOSITORY, InjectionToken.IMAGE_REPOSITORY],
 })
 export class MysqlModule {}
