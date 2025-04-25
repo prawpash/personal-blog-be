@@ -2,7 +2,7 @@ import User from '@core/domain/entities/User';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from '../entities/UserEntity';
-import { Repository } from 'typeorm';
+import { Equal, Not, Repository } from 'typeorm';
 import UserBuilder from '@core/domain/builders/UserBuilder';
 import { UserRepository } from '@core/application/repositories/UserRepository';
 import { UpdateUserDTO } from '@core/application/dtos/user/UpdateUserDTO';
@@ -26,6 +26,29 @@ export class UserRepositoryImplementation implements UserRepository {
       userByUsername.email,
       userByUsername.createdAt,
       userByUsername.updatedAt,
+    );
+
+    return user;
+  }
+
+  async findByUsernameExceptForId(
+    username: string,
+    userId: number,
+  ): Promise<UserResponseDTO | null> {
+    const userByUsernameExceptForId = await this.userRepository.findOneBy({
+      username,
+      id: Not(Equal(userId)),
+    });
+
+    if (!userByUsernameExceptForId) return null;
+
+    const user = new UserResponseDTO(
+      userByUsernameExceptForId.id,
+      userByUsernameExceptForId.name,
+      userByUsernameExceptForId.username,
+      userByUsernameExceptForId.email,
+      userByUsernameExceptForId.createdAt,
+      userByUsernameExceptForId.updatedAt,
     );
 
     return user;
@@ -71,6 +94,29 @@ export class UserRepositoryImplementation implements UserRepository {
     return null;
   }
 
+  async findByEmailExceptForId(
+    email: string,
+    userId: number,
+  ): Promise<UserResponseDTO | null> {
+    const userByEmailExceptForId = await this.userRepository.findOneBy({
+      email,
+      id: Not(Equal(userId)),
+    });
+
+    if (!userByEmailExceptForId) return null;
+
+    const user = new UserResponseDTO(
+      userByEmailExceptForId.id,
+      userByEmailExceptForId.name,
+      userByEmailExceptForId.username,
+      userByEmailExceptForId.email,
+      userByEmailExceptForId.createdAt,
+      userByEmailExceptForId.updatedAt,
+    );
+
+    return user;
+  }
+
   async create(user: User): Promise<UserResponseDTO> {
     const data: Partial<UserEntity> = {
       name: user.getName(),
@@ -93,11 +139,25 @@ export class UserRepositoryImplementation implements UserRepository {
     return formattedUser;
   }
 
-  async update(userId: number, payload: UpdateUserDTO): Promise<void> {
-    await this.userRepository.save({
+  async update(
+    userId: number,
+    payload: UpdateUserDTO,
+  ): Promise<UserResponseDTO> {
+    const updatedUser = await this.userRepository.save({
       id: userId,
       ...payload,
     });
+
+    const formattedUser = new UserResponseDTO(
+      updatedUser.id,
+      updatedUser.name,
+      updatedUser.username,
+      updatedUser.email,
+      updatedUser.createdAt,
+      updatedUser.updatedAt,
+    );
+
+    return formattedUser;
   }
 
   async deleteById(userId: number): Promise<void> {

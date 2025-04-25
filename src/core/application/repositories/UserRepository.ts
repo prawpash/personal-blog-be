@@ -7,11 +7,21 @@ export interface UserRepository {
 
   findByEmail(email: string): Promise<User | null>;
 
+  findByEmailExceptForId(
+    email: string,
+    userId: number,
+  ): Promise<UserResponseDTO | null>;
+
   findByUsername(username: string): Promise<UserResponseDTO | null>;
+
+  findByUsernameExceptForId(
+    username: string,
+    userId: number,
+  ): Promise<UserResponseDTO | null>;
 
   create(user: User): Promise<UserResponseDTO>;
 
-  update(userId: number, payload: UpdateUserDTO): Promise<void>;
+  update(userId: number, payload: UpdateUserDTO): Promise<UserResponseDTO>;
 
   deleteById(userId: number): Promise<void>;
 }
