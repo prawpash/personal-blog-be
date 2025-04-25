@@ -7,8 +7,8 @@ import {
   Inject,
   NotFoundException,
   Param,
+  Patch,
   Post,
-  Put,
 } from '@nestjs/common';
 import { Logger } from '@core/application/services/Logger';
 import { InjectionToken } from '@infra/config/injectionToken.config';
@@ -30,6 +30,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { UserResponseDTO } from '@core/application/dtos/user/UserResponseDTO';
+import UpdateUserUseCase from '@core/application/usecases/user/UpdateUserUseCase';
+import { ImageRepository } from '@core/application/repositories/ImageRepository';
 
 @ApiTags('users')
 @Controller('users')
@@ -41,6 +43,8 @@ export class UserController {
     private readonly userRepository: UserRepository,
     @Inject(InjectionToken.PASSWORD_SERVICE)
     private readonly passwordService: PasswordService,
+    @Inject(InjectionToken.IMAGE_REPOSITORY)
+    private readonly imageRepository: ImageRepository,
   ) {}
 
   @ApiOperation({
@@ -157,16 +161,108 @@ export class UserController {
     }
   }
 
-  @Put(':id')
-  updateUser(
+  @ApiOperation({
+    summary: 'Update user',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Id of the user',
+    required: true,
+    type: String,
+  })
+  @ApiBody({
+    type: UpdateUserRequestDTO,
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Response when user created',
+    type: UserResponseDTO,
+    example: {
+      id: 1,
+      name: 'Sopo',
+      username: 'sopo',
+      email: 'sopo@gmail.com',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'Response when email or username already exists',
+    examples: {
+      'email-already-exists': {
+        value: {
+          message: 'This email is already in use. Please use another.',
+          error: 'Conflict',
+          statusCode: 409,
+        },
+        summary: 'Email already exists',
+      },
+      'username-already-exists': {
+        value: {
+          message: 'This username is already in use. Please use another.',
+          error: 'Conflict',
+          statusCode: 409,
+        },
+        summary: 'Username already exists',
+      },
+    },
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Response when user not found',
+    examples: {
+      'user-not-found': {
+        value: {
+          message: 'User with this id does not exist',
+          error: 'Not Found',
+          statusCode: 404,
+        },
+        summary: 'User not found',
+      },
+      'image-not-found': {
+        value: {
+          message: 'Image with this id does not exist',
+          error: 'Not Found',
+          statusCode: 404,
+        },
+        summary: 'Image not found',
+      },
+    },
+  })
+  @Patch(':id')
+  async updateUser(
     @Param() params: IdValidationDTO,
     @Body() updatedUserDTO: UpdateUserRequestDTO,
   ) {
-    const { id } = params;
+    try {
+      const { id } = params;
 
-    this.logger.debug(updatedUserDTO);
+      const updateUserUseCase = new UpdateUserUseCase(
+        this.userRepository,
+        this.imageRepository,
+      );
 
-    return `Update use by id: ${id}`;
+      const updatedUserPayloadFromDTO =
+        UserMapper.toApplicationUpdateDTO(updatedUserDTO);
+
+      const updatedUser = await updateUserUseCase.execute(
+        id,
+        updatedUserPayloadFromDTO,
+      );
+
+      return updatedUser;
+    } catch (error) {
+      if (error instanceof CoreConflictException) {
+        throw new ConflictException(error.message);
+      }
+
+      if (error instanceof CoreNotFoundException) {
+        throw new NotFoundException(error.message);
+      }
+
+      throw error;
+    }
   }
 
   @Delete(':id')
