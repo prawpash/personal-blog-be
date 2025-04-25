@@ -1,6 +1,8 @@
 export class UpdateUserDTO {
-  name?: string;
-  username?: string;
-  email?: string;
-  profilePictureId?: number;
+  constructor(
+    public readonly name?: string,
+    public readonly username?: string,
+    public readonly email?: string,
+    public readonly profilePictureId?: number,
+  ) {}
 }
