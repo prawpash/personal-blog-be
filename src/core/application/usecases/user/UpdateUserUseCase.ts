@@ -59,7 +59,10 @@ export default class UpdateUserUseCase {
     }
 
     // Update user in database
-    const updatedUser = await this.userRepository.update(userId, payload);
+    const updatedUser = await this.userRepository.update(
+      userById.getId()!,
+      payload,
+    );
 
     return updatedUser;
   }
