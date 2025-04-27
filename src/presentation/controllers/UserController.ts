@@ -10,7 +10,6 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { Logger } from '@core/application/services/Logger';
 import { InjectionToken } from '@infra/config/injectionToken.config';
 import GetUserByUsernameUseCase from '@core/application/usecases/user/GetUserByUsernameUseCase';
 import { NotFoundException as CoreNotFoundException } from '@core/exceptions/NotFoundException';
@@ -33,12 +32,10 @@ import { UserResponseDTO } from '@core/application/dtos/user/UserResponseDTO';
 import UpdateUserUseCase from '@core/application/usecases/user/UpdateUserUseCase';
 import { ImageRepository } from '@core/application/repositories/ImageRepository';
 
-@ApiTags('users')
+@ApiTags('Users')
 @Controller('users')
 export class UserController {
   constructor(
-    @Inject(InjectionToken.LOGGER)
-    private readonly logger: Logger,
     @Inject(InjectionToken.USER_REPOSITORY)
     private readonly userRepository: UserRepository,
     @Inject(InjectionToken.PASSWORD_SERVICE)
@@ -167,8 +164,6 @@ export class UserController {
   @ApiParam({
     name: 'id',
     description: 'Id of the user',
-    required: true,
-    type: String,
   })
   @ApiBody({
     type: UpdateUserRequestDTO,
@@ -265,6 +260,13 @@ export class UserController {
     }
   }
 
+  @ApiOperation({
+    summary: 'Delete user',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Id of the user',
+  })
   @Delete(':id')
   deleteUser(@Param() params: IdValidationDTO) {
     const { id } = params;
