@@ -5,6 +5,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { InjectionToken } from '@infra/config/injectionToken.config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { apiReference } from '@scalar/nestjs-api-reference';
+import { Logger } from '@core/application/services/Logger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -13,8 +14,9 @@ async function bootstrap() {
 
   const configService = app.get(EnvService);
   const port = configService.get('PORT');
+  const logger: Logger = app.get(InjectionToken.LOGGER);
 
-  app.useLogger(app.get(InjectionToken.LOGGER));
+  app.useLogger(logger);
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -47,6 +49,8 @@ async function bootstrap() {
   );
 
   await app.listen(port);
+
+  logger.log(`Server is running on port ${port}`);
 }
 
 void bootstrap();
