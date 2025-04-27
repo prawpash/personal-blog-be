@@ -1,34 +1,26 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsEmail,
-  IsNotEmpty,
-  IsString,
-  MaxLength,
-  MinLength,
-} from 'class-validator';
+import IsNotEmptyString from '@presentation/decorators/IsNotEmptyString';
+import { IsEmail, MaxLength, MinLength } from 'class-validator';
 
 export class CreateUserRequestDTO {
   @ApiProperty({
     example: 'Sopo',
   })
-  @IsNotEmpty()
-  @IsString()
+  @IsNotEmptyString()
   @MaxLength(255)
   readonly name: string;
 
   @ApiProperty({
     example: 'sopo',
   })
-  @IsNotEmpty()
-  @IsString()
+  @IsNotEmptyString()
   @MaxLength(255)
   readonly username: string;
 
   @ApiProperty({
     example: 'sopo@example.com',
   })
-  @IsNotEmpty()
-  @IsString()
+  @IsNotEmptyString()
   @IsEmail()
   @MaxLength(255)
   readonly email: string;
@@ -36,8 +28,7 @@ export class CreateUserRequestDTO {
   @ApiProperty({
     example: 'passwordeSopo',
   })
-  @IsNotEmpty()
-  @IsString()
+  @IsNotEmptyString()
   @MinLength(8, {
     message: 'Password must be at least 8 characters long',
   })
