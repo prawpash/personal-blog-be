@@ -5,9 +5,11 @@ import { EnvModule } from '@infra/env/env.module';
 import { ImageController } from './ImageController';
 import { UserController } from './UserController';
 import { LoggerModule } from '@infra/logger/LoggerModule';
+import { MysqlModule } from '@infra/persistence/mysql/mysql.module';
+import BcryptModule from '@infra/bcrypt/BcryptModule';
 
 @Module({
-  imports: [LoggerModule, EnvModule],
+  imports: [LoggerModule, EnvModule, MysqlModule, BcryptModule],
   controllers: [
     CategoryController,
     PostController,
@@ -15,4 +17,4 @@ import { LoggerModule } from '@infra/logger/LoggerModule';
     UserController,
   ],
 })
-export class ControllerModule {}
+export class ControllerModule { }

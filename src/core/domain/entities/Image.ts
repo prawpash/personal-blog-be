@@ -5,12 +5,18 @@ export default class Image {
   private createdAt: Date;
   private updatedAt: Date;
 
-  constructor(id: number | null, fileName: string, fileLocation: string) {
+  constructor(
+    id: number | null,
+    fileName: string,
+    fileLocation: string,
+    createdAt: Date,
+    updatedAt: Date,
+  ) {
     this.id = id;
     this.fileName = fileName;
     this.fileLocation = fileLocation;
-    this.createdAt = new Date();
-    this.updatedAt = new Date();
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
   }
 
   getId() {

@@ -17,6 +17,8 @@ export default class User {
     password: string,
     profilePictureId: number | null,
     postIds: number[],
+    createdAt: Date,
+    updatedAt: Date,
   ) {
     this.id = id;
     this.name = name;
@@ -25,8 +27,8 @@ export default class User {
     this.password = password;
     this.profilePictureId = profilePictureId;
     this.postIds = postIds;
-    this.createdAt = new Date();
-    this.updatedAt = new Date();
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
   }
 
   getId() {

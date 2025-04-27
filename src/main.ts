@@ -3,6 +3,9 @@ import { AppModule } from './app.module';
 import { EnvService } from '@infra/env/env.service';
 import { ValidationPipe } from '@nestjs/common';
 import { InjectionToken } from '@infra/config/injectionToken.config';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { apiReference } from '@scalar/nestjs-api-reference';
+import { Logger } from '@core/application/services/Logger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -11,8 +14,9 @@ async function bootstrap() {
 
   const configService = app.get(EnvService);
   const port = configService.get('PORT');
+  const logger: Logger = app.get(InjectionToken.LOGGER);
 
-  app.useLogger(app.get(InjectionToken.LOGGER));
+  app.useLogger(logger);
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -21,7 +25,32 @@ async function bootstrap() {
     }),
   );
 
+  // Swagger Implementation
+  const swaggerURL = '/swagger';
+
+  const swaggerDocument = new DocumentBuilder()
+    .setTitle('Personal Blog API')
+    .setDescription('List of APIs for Personal Blog')
+    .setVersion('0.0.1')
+    .addTag('Personal Blog')
+    .build();
+
+  const swaggerDocumentFactory = () =>
+    SwaggerModule.createDocument(app, swaggerDocument);
+
+  SwaggerModule.setup(swaggerURL, app, swaggerDocumentFactory, { ui: false });
+
+  // Scalar Implementation
+  app.use(
+    '/doc',
+    apiReference({
+      url: `${swaggerURL}-json`,
+    }),
+  );
+
   await app.listen(port);
+
+  logger.log(`Server is running on port ${port}`);
 }
 
-bootstrap();
+void bootstrap();

@@ -15,7 +15,7 @@ export const TypeORMDataSourceOptions: DataSourceOptions = {
   username: envService.get('DATABASE_USER'),
   password: envService.get('DATABASE_PASSWORD'),
   database: envService.get('DATABASE_NAME'),
-  entities: [`${__dirname}/../persistence/mysql/entities/*.ts`],
+  entities: [`${__dirname}/../persistence/mysql/entities/*.{ts,js}`],
   synchronize: false,
   migrations: [`${__dirname}/../persistence/mysql/migrations/*.ts`],
   migrationsTableName: 'migrations',

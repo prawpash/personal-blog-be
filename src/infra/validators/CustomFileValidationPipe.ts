@@ -3,7 +3,7 @@ import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
 import { parse } from 'file-type-mime';
 
 @Injectable()
-export class CustomValidationPipe implements PipeTransform {
+export class CustomFileValidationPipe implements PipeTransform {
   constructor(private readonly configService: EnvService) {}
 
   transform(value: Express.Multer.File) {
